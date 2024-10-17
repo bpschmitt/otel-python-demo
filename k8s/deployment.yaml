@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otel-python-demo
+  labels:
+    app: otel-python-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otel-python-demo
+  template:
+    metadata:
+      labels:
+        app: otel-python-demo
+    spec:
+      containers:
+      - name: otel-python-demo
+        image: bschmitt769/otel-python-demo:0.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+        env:
+        - name: OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED
+          value: "true"
+        - name: OTEL_SERVICE_NAME
+          value: "otel-python-rolldice"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://opentelemetry-collector.collector.svc.cluster.local:4317"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otel-python-demo-svc
+spec:
+  selector:
+    app: otel-python-demo
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
