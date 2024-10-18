@@ -208,6 +208,17 @@ alternateConfig:
       limit_percentage: 80
       # By default spike_limit_mib is set to 25% of ".Values.resources.limits.memory"
       spike_limit_percentage: 25
+    k8sattributes:
+      pod_association:
+      - sources:
+          - from: connection
+      extract:
+        metadata:
+        - k8s.pod.name
+        - k8s.pod.uid
+        - container.image.name
+        - container.image.tag
+        - k8s.container.name
   receivers:
     otlp:
       protocols:
@@ -215,14 +226,14 @@ alternateConfig:
           endpoint: ${env:MY_POD_IP}:4317
         http:
           endpoint: ${env:MY_POD_IP}:4318
-    # prometheus:
-    #   config:
-    #     scrape_configs:
-    #       - job_name: opentelemetry-collector
-    #         scrape_interval: 10s
-    #         static_configs:
-    #           - targets:
-    #               - ${env:MY_POD_IP}:8888
+    prometheus:
+      config:
+        scrape_configs:
+          - job_name: opentelemetry-collector
+            scrape_interval: 10s
+            static_configs:
+              - targets:
+                  - ${env:MY_POD_IP}:8888
   service:
     # telemetry:
     #   metrics:
@@ -230,30 +241,34 @@ alternateConfig:
     extensions:
       - health_check
     pipelines:
-      # logs:
-      #   exporters:
-      #     - debug
-      #   processors:
-      #     - memory_limiter
-      #     - batch
-      #   receivers:
-      #     - otlp
-      # metrics:
-      #   exporters:
-      #     - otlphttp/newrelic
-      #     - debug
-      #   processors:
-      #     - memory_limiter
-      #     - batch
-      #   receivers:
-      #     - otlp
-      #     - prometheus
+      logs:
+        exporters:
+          - otlphttp/newrelic
+          - debug
+        processors:
+          - memory_limiter
+          - k8sattributes
+          - batch
+        receivers:
+          - otlp
+      metrics:
+        exporters:
+          - otlphttp/newrelic
+          - debug
+        processors:
+          - memory_limiter
+          - k8sattributes
+          - batch
+        receivers:
+          - otlp
+          - prometheus
       traces:
         exporters:
           - otlphttp/newrelic
           - debug
         processors:
           - memory_limiter
+          - k8sattributes
           - batch
         receivers:
           - otlp
@@ -286,7 +301,7 @@ clusterRole:
   # Specifies whether a clusterRole should be created
   # Some presets also trigger the creation of a cluster role and cluster role binding.
   # If using one of those presets, this field is no-op.
-  create: false
+  create: true
   # Annotations to add to the clusterRole
   # Can be used in combination with presets that create a cluster role.
   annotations: {}
@@ -296,16 +311,16 @@ clusterRole:
   name: ""
   # A set of rules as documented here : https://kubernetes.io/docs/reference/access-authn-authz/rbac/
   # Can be used in combination with presets that create a cluster role to add additional rules.
-  rules: []
-  # - apiGroups:
-  #   - ''
-  #   resources:
-  #   - 'pods'
-  #   - 'nodes'
-  #   verbs:
-  #   - 'get'
-  #   - 'list'
-  #   - 'watch'
+  rules:
+  - apiGroups:
+    - ''
+    resources:
+    - 'pods'
+    - 'nodes'
+    verbs:
+    - 'get'
+    - 'list'
+    - 'watch'
 
   clusterRoleBinding:
     # Annotations to add to the clusterRoleBinding

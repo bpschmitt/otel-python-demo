@@ -27,9 +27,13 @@ spec:
         env:
         - name: OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED
           value: "true"
+        - name: OTEL_LOGS_EXPORTER
+          value: "otlp"
         - name: OTEL_SERVICE_NAME
           value: "otel-python-rolldice"
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://opentelemetry-collector.collector.svc.cluster.local:4317"
+        - name: OTEL_EXPORTER_OTLP_LOGS_ENDPOINT
           value: "http://opentelemetry-collector.collector.svc.cluster.local:4317"
 ---
 apiVersion: v1
