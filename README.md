@@ -38,6 +38,27 @@ The Python app in this repo replicates a simple roll of the dice while tracking 
 ```
 kubectl create ns demo && kubectl apply -f k8s/. -n demo
 ```
+# Validating the data
+
+After logging in to your New Relic account, you should see an APM Entity named `otel-python-rolldice`.
+
+![AllEntities](https://p191.p3.n0.cdn.zight.com/items/d5uj22kw/65177937-7a71-49d6-a230-7e713b992f90.jpg?v=8a4bf087f46058d3a5b8ab6a8c6b6675)
+
+When you click into the `otel-python-rolldice` entity, you are taken to the APM Summary page which provides you with the golden signals for the service.
+
+![APMView](https://p191.p3.n0.cdn.zight.com/items/eDuZeeDj/5da1eb74-5074-4f8f-8ac8-0e02c07adcf0.jpg?v=830070adf14e97b2ff7cc26f13475c04)
+
+From here, you can click into Distributed Tracing to view individual traces for the service.
+
+![Traces](https://p191.p3.n0.cdn.zight.com/items/6qu1XX49/0354530c-15c6-4178-b6c0-798a4fbfa459.jpg?v=995bbc697dac8cda53c69317627307fd)
+
+You can navigate to the Logs related to the service by clicking `Logs` in the left nav.
+
+![Logs](https://p191.p3.n0.cdn.zight.com/items/v1uqBB80/9165d620-36f1-4d5e-befa-88e4be4e8ec2.jpg?v=337b2d2f45816e35e7d0665e5d453f4ak)
+
+And finally, you can view Metrics emitted by the service in the Metrics Explorer.  In thi example, you're looking at the count of dice rolls by number rolled.
+
+![Metrics](https://p191.p3.n0.cdn.zight.com/items/nOu2JJxz/be271471-63ad-4788-aa41-f8db4cbc5540.jpg?v=a2c9e1d8c4713736e400fbfa6de4d14c)
 
 # Updating
 
