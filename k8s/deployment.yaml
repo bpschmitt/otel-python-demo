@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: otel-python-demo
-        image: bschmitt769/otel-python-demo:0.1
+        image: bschmitt769/otel-python-demo:0.2
         imagePullPolicy: Always
         ports:
         - containerPort: 8080

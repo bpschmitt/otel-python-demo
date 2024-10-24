@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: locust-scripts
+data:
+  locustfile.py: |
+    import time
+    from locust import HttpUser, task
+    from random import randint
+
+    playerList = ['Brad','Sandeep','Marcel','Kim','Jim','Mir']
+
+    class QuickstartUser(HttpUser):
+        @task
+        def generic_roll(self):
+            self.client.get("/rolldice")
+
+        @task(3)
+        def player_roll(self):
+            player = playerList[randint(0, len(playerList) - 1)]
+            self.client.get("/rolldice?player=" + player)
+            
